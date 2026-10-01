@@ -9,17 +9,44 @@
   @media (prefers-color-scheme: dark) { :root { --bg: #0f172a; --card: #1e293b; --ink: #f1f5f9; --ink2: #94a3b8; --line: #334155; --accent: #fb7185; } }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
-  main { max-width: 560px; margin: 0 auto; padding: 16px; }
+  main { max-width: 760px; margin: 0 auto; padding: 16px; }
   h1 { font-size: 22px; margin: 8px 0 4px; }
   .notice { font-size: 12px; color: var(--ink2); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 10px 0 14px; line-height: 1.5; }
-  .find { display: flex; gap: 8px; margin-bottom: 14px; }
-  .find input { flex: 1; font-size: 18px; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
-  .card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-decoration: none; color: inherit; }
+  .find { display: flex; gap: 8px; margin-bottom: 10px; }
+  .find input { flex: 1; min-width: 0; font-size: 17px; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  .find #q { flex: 0 0 40%; }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+  .count { font-size: 13px; color: var(--ink2); }
+  .tools { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--card); }
+  .seg button, .pager button { font: inherit; font-size: 13px; padding: 7px 11px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; font-weight: 700; }
+  #list { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-decoration: none; color: inherit; }
   .card.hide { display: none; } .card.hit { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
   .pic { flex: 0 0 auto; width: 76px; height: 76px; border-radius: 10px; object-fit: cover; background: var(--line); }
   .no { display: block; font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 2px; }
   .body { flex: 1; min-width: 0; } .body b { display: block; font-size: 15px; } .body small { display: block; color: var(--ink2); font-size: 12px; margin-top: 2px; }
-  .go { flex: 0 0 auto; font-size: 13px; font-weight: 700; color: #fff; background: var(--accent); border-radius: 8px; padding: 8px 10px; white-space: nowrap; }
+  .go { flex: 0 0 auto; font-size: 13px; font-weight: 700; color: #fff; background: var(--accent); border-radius: 8px; padding: 8px 14px; white-space: nowrap; text-align: center; }
+  #list.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 600px) { #list.grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  #list.grid .card { flex-direction: column; align-items: stretch; gap: 8px; }
+  #list.grid .pic { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+  #list.grid .body b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; }
+  #list.grid .body small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #list.compact { gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+  #list.compact .card { border: 0; border-radius: 0; padding: 9px 12px; gap: 10px; }
+  #list.compact .card + .card { border-top: 1px solid var(--line); }
+  #list.compact .pic, #list.compact .body small { display: none; }
+  #list.compact .body { display: flex; align-items: baseline; gap: 8px; }
+  #list.compact .no { flex: 0 0 auto; margin: 0; min-width: 36px; }
+  #list.compact .body b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #list.compact .go { padding: 5px 10px; font-size: 12px; }
+  .pager { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; margin: 16px 0 4px; }
+  .pager button { min-width: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+  .pager button[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .pager button:disabled { opacity: .4; cursor: default; }
   .empty { color: var(--ink2); text-align: center; padding: 30px 0; }
   footer { color: var(--ink2); font-size: 12px; text-align: center; margin: 20px 0; }
 </style>
@@ -28,24 +55,52 @@
 <main>
   <h1>영상 속 제품 모음</h1>
   <div class="notice">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</div>
-  <div class="find"><input id="q" type="number" inputmode="numeric" placeholder="영상에서 본 번호 (예: 12)" aria-label="영상 번호"></div>
-  <a class="card" id="n4" data-no="4" href="https://link.coupang.com/a/huEj5DmoQm" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/11a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">4번</span><b>이동식 틈새 선반</b><small>냉장고 옆 틈새, 수납장으로 바꾸는 법   #주방수납 #틈새수납 #생활꿀팁</small></span><span class="go">쿠팡에서 보기</span></a>
-<a class="card" id="n3" data-no="3" href="https://link.coupang.com/a/huAp13ImfA" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/10a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">3번</span><b>무타공 접이식 욕실 수납장 (거울형)</b><small>샤워할 때 옷이 자꾸 젖는다면? 거울 뒤에 숨긴 수납칸</small></span><span class="go">쿠팡에서 보기</span></a>
-<a class="card" id="n2" data-no="2" href="https://link.coupang.com/a/hsBI7hVBmu" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/4a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">2번</span><b>전기포트인데 라면이 끓는다고?</b><small>자취방 라면, 냄비 말고 이거 하나면 돼요</small></span><span class="go">쿠팡에서 보기</span></a>
-<a class="card" id="n1" data-no="1" href="https://link.coupang.com/a/hrzsWVtx7c" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/1a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">1번</span><b>비트 O2 강력 얼룩제거제</b><small>빨아도 안 지워지는 셔츠 목때 해결법</small></span><span class="go">쿠팡에서 보기</span></a>
-  <p class="empty" id="none" hidden>그 번호의 제품이 없어요.</p>
+  <div class="find"><input id="q" type="number" inputmode="numeric" placeholder="번호 (예: 12)" aria-label="영상 번호"><input id="name" type="search" placeholder="제품 이름으로 찾기" aria-label="제품 이름"></div>
+  <div class="bar"><span class="count" id="count"></span><span class="tools"><span class="seg" id="views"><button type="button" data-view="list">한줄로보기</button><button type="button" data-view="grid">모아보기</button><button type="button" data-view="compact">목록만</button></span><span class="seg" id="order"><button type="button" data-order="new">최신순</button><button type="button" data-order="old">오래된순</button></span></span></div>
+  <div id="list">
+<a class="card" id="n4" data-no="4" data-text="이동식 틈새 선반 냉장고 옆 틈새, 수납장으로 바꾸는 법   #주방수납 #틈새수납 #생활꿀팁" href="https://link.coupang.com/a/huEj5DmoQm" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/11a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">4번</span><b>이동식 틈새 선반</b><small>냉장고 옆 틈새, 수납장으로 바꾸는 법   #주방수납 #틈새수납 #생활꿀팁</small></span><span class="go">보기</span></a>
+<a class="card" id="n3" data-no="3" data-text="무타공 접이식 욕실 수납장 (거울형) 샤워할 때 옷이 자꾸 젖는다면? 거울 뒤에 숨긴 수납칸" href="https://link.coupang.com/a/huAp13ImfA" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/10a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">3번</span><b>무타공 접이식 욕실 수납장 (거울형)</b><small>샤워할 때 옷이 자꾸 젖는다면? 거울 뒤에 숨긴 수납칸</small></span><span class="go">보기</span></a>
+<a class="card" id="n2" data-no="2" data-text="전기포트인데 라면이 끓는다고? 자취방 라면, 냄비 말고 이거 하나면 돼요" href="https://link.coupang.com/a/hsBI7hVBmu" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/4a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">2번</span><b>전기포트인데 라면이 끓는다고?</b><small>자취방 라면, 냄비 말고 이거 하나면 돼요</small></span><span class="go">보기</span></a>
+<a class="card" id="n1" data-no="1" data-text="비트 o2 강력 얼룩제거제 빨아도 안 지워지는 셔츠 목때 해결법" href="https://link.coupang.com/a/hrzsWVtx7c" target="_blank" rel="nofollow sponsored noopener"><img class="pic" src="img/1a.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="body"><span class="no">1번</span><b>비트 O2 강력 얼룩제거제</b><small>빨아도 안 지워지는 셔츠 목때 해결법</small></span><span class="go">보기</span></a>
+  </div>
+  <p class="empty" id="none" hidden>찾는 제품이 없어요.</p>
+  <nav class="pager" id="pager" aria-label="페이지"></nav>
   <footer>2026.10.1 기준 · 제품 4개</footer>
 </main>
 <script>
-  const q = document.getElementById("q"); // 번호 입력
-  const cards = [...document.querySelectorAll(".card")]; // 제품 카드
-  q.addEventListener("input", () => {
-    const v = q.value.trim(); // 입력값
-    let shown = 0; // 보이는 수
-    for (const c of cards) { const hit = v === "" || c.dataset.no === v; c.classList.toggle("hide", !hit); c.classList.toggle("hit", v !== "" && hit); if (hit) shown++; } // 번호로 거르기
-    document.getElementById("none").hidden = shown > 0; // 없을 때 안내
-  });
-  if (location.hash.startsWith("#n")) { q.value = location.hash.slice(2); q.dispatchEvent(new Event("input")); } // 주소 끝 #n12 로 바로 찾기
+  const PER = 20; // 한 페이지 제품 수
+  const q = document.getElementById("q"), nameBox = document.getElementById("name"), list = document.getElementById("list"), pager = document.getElementById("pager"); // 화면 요소
+  const all = [...document.querySelectorAll(".card")]; // 제품 카드 (최신부터)
+  const saved = (k, d) => { try { return localStorage.getItem(k) || d; } catch { return d; } }; // 기억해 둔 설정
+  const keep = (k, v) => { try { localStorage.setItem(k, v); } catch {} }; // 설정 기억
+  let view = saved("view", "list"), order = saved("order", "new"), page = 1; // 보기 방식·정렬·페이지
+  function render() {
+    const no = q.value.trim(), word = nameBox.value.trim().toLowerCase(); // 찾을 번호·이름
+    const cards = order === "old" ? [...all].reverse() : all; // 정렬
+    const hits = cards.filter((c) => (no === "" || c.dataset.no === no) && (word === "" || c.dataset.text.includes(word))); // 거르기
+    const pages = Math.max(1, Math.ceil(hits.length / PER)); page = Math.min(Math.max(1, page), pages); // 페이지 수
+    const shown = new Set(hits.slice((page - 1) * PER, page * PER)); // 이 페이지 카드
+    for (const c of cards) { list.appendChild(c); c.classList.toggle("hide", !shown.has(c)); c.classList.toggle("hit", no !== "" && shown.has(c)); } // 순서·보이기
+    list.className = view; // 보기 방식
+    for (const b of document.querySelectorAll("#views button")) b.setAttribute("aria-pressed", String(b.dataset.view === view)); // 버튼 표시
+    for (const b of document.querySelectorAll("#order button")) b.setAttribute("aria-pressed", String(b.dataset.order === order)); // 버튼 표시
+    document.getElementById("none").hidden = all.length === 0 || hits.length > 0; // 없을 때 안내
+    document.getElementById("count").textContent = hits.length === 0 ? "" : pages > 1 ? `${hits.length}개 중 ${(page - 1) * PER + 1}–${Math.min(page * PER, hits.length)}` : `${hits.length}개`; // 개수
+    pager.innerHTML = ""; // 페이지 버튼
+    if (pages > 1) {
+      const add = (label, to, opts) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.disabled = !!opts.disabled; if (opts.current) b.setAttribute("aria-current", "page"); b.onclick = () => { page = to; render(); list.scrollIntoView({ behavior: "smooth", block: "start" }); }; pager.appendChild(b); }; // 버튼 하나
+      const from = Math.max(1, Math.min(page - 2, pages - 4)), to = Math.min(pages, from + 4); // 보여 줄 번호 (최대 5개)
+      add("‹ 이전", page - 1, { disabled: page === 1 }); // 이전
+      for (let i = from; i <= to; i++) add(String(i), i, { current: i === page }); // 번호
+      add("다음 ›", page + 1, { disabled: page === pages }); // 다음
+    }
+  }
+  q.addEventListener("input", () => { page = 1; render(); }); // 번호로 찾기
+  nameBox.addEventListener("input", () => { page = 1; render(); }); // 이름으로 찾기
+  document.getElementById("views").addEventListener("click", (e) => { const v = e.target.dataset && e.target.dataset.view; if (v) { view = v; keep("view", v); render(); } }); // 보기 방식 바꾸기
+  document.getElementById("order").addEventListener("click", (e) => { const o = e.target.dataset && e.target.dataset.order; if (o) { order = o; keep("order", o); page = 1; render(); } }); // 정렬 바꾸기
+  if (location.hash.startsWith("#n")) q.value = location.hash.slice(2); // 주소 끝 #n12 로 바로 찾기
+  render(); // 처음 그리기
 </script>
 </body>
 </html>
